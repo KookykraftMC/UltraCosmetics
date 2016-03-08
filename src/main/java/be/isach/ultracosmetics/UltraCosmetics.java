@@ -49,7 +49,15 @@ import java.util.*;
  */
 public class UltraCosmetics extends JavaPlugin {
 
-    public static
+    //KookyKraftMC Start
+    public static File jarfile = new File("plugins/KookyFramework/UltraCosmetics/UltraCosmetics.jar".replace("/",File.separator));
+
+    public UltraCosmetics() {
+        super();
+    }
+
+    //KookyKraftMC End
+
 
     /**
      * Manages sub commands.
@@ -74,7 +82,13 @@ public class UltraCosmetics extends JavaPlugin {
     /**
      * If true, means vault is loaded and enabled.
      */
-    public boolean vaultLoaded;
+    //public boolean vaultLoaded;
+    //KookyKraftMC Start
+    /*
+    public static Object economy = null;
+    public static SQLUtils sqlUtils;
+    */
+    //KookyKraftMC End
 
     /**
      * Menu Listeners.
@@ -323,8 +337,9 @@ public class UltraCosmetics extends JavaPlugin {
      *
      * @return last version published on Spigot.
      */
+    //KookyKraftMC Start
     public static String getLastVersion() {
-        try {
+        /*try {
             HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php").openConnection();
             con.setDoOutput(true);
             con.setConnectTimeout(2000);
@@ -337,9 +352,10 @@ public class UltraCosmetics extends JavaPlugin {
             }
         } catch (Exception ex) {
             System.out.print("[UltraCosmetics] Failed to check for an update on spigot. ");
-        }
+        }*/
         return null;
     }
+    //KookyKraftMC End
 
     /**
      * Removes color in a text.
@@ -386,8 +402,10 @@ public class UltraCosmetics extends JavaPlugin {
 
         log("");
         log("Loading configuration...");
+        config = SettingsManager.conf.fileConfiguration;
 
-        file = new File(getDataFolder(), "config.yml");
+        //KookyKraftMC Start
+        /*file = new File(getDataFolder(), "config.yml");
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -396,7 +414,8 @@ public class UltraCosmetics extends JavaPlugin {
             log("Creating Config File and loading it.");
         }
 
-        config = CustomConfiguration.loadConfiguration(file);
+        config = CustomConfiguration.loadConfiguration(file);*/
+        //KookyKraftMC End
 
         List<String> enabledWorlds = new ArrayList<>();
         for (World world : Bukkit.getWorlds())
@@ -405,6 +424,7 @@ public class UltraCosmetics extends JavaPlugin {
 
         config.set("Disabled-Items", null);
 
+        //KookyKraftMC Start
         if (!config.contains("TreasureChests.Loots.Gadgets")) {
             config.createSection("TreasureChests.Loots.Gadgets", "Chance of getting a GADGET", "This is different from ammo!");
             config.set("TreasureChests.Loots.Gadgets.Enabled", true);
@@ -443,6 +463,8 @@ public class UltraCosmetics extends JavaPlugin {
         config.addDefault("Categories-Enabled.Suits", true, "Do you want to enable Suits category?");
 
         config.addDefault("Categories.Gadgets.Cooldown-In-ActionBar", true, "You wanna show the cooldown of", "current gadget in action bar?");
+
+        //KookyKraftMC End
 
         saveConfig();
 
@@ -513,11 +535,13 @@ public class UltraCosmetics extends JavaPlugin {
         log("Registered commands.");
         log("");
 
-        String s = SettingsManager.getConfig().getString("Ammo-System-For-Gadgets.System");
-        fileStorage = s.equalsIgnoreCase("file");
-        placeHolderColor = SettingsManager.getConfig().getBoolean("Chat-Cosmetic-PlaceHolder-Color");
-        ammoEnabled = SettingsManager.getConfig().getBoolean("Ammo-System-For-Gadgets.Enabled");
-        cooldownInBar = SettingsManager.getConfig().getBoolean("Categories.Gadgets.Cooldown-In-ActionBar");
+        //KookyKraftMC Start
+        //String s = SettingsManager.getConfig().getString("Ammo-System-For-Gadgets.System");
+        fileStorage = true;
+        placeHolderColor = true;
+        ammoEnabled = true;
+        cooldownInBar = true;
+        //KookyKraftMC End
 
         for (Category c : Category.values()) {
             if (c == Category.MORPHS)
@@ -535,7 +559,8 @@ public class UltraCosmetics extends JavaPlugin {
 
         checkTreasureChests();
 
-        new Thread() {
+        //KookyKraftMC Start
+        /*new Thread() {
 
             @Override
             public void run() {
@@ -546,15 +571,16 @@ public class UltraCosmetics extends JavaPlugin {
                         if (p.isOp())
                             p.sendMessage("§l§oUltraCosmetics > §c§lAn update is available: " + lastVersion);
             }
-        }.run();
+        }.run();*/
 
         log("Registering Cosmetics...");
         setupCosmeticsConfigs();
-        try {
+        /*try {
             config.save(file);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        //KookyKraftMC End
         log("Gadgets Registered.");
 
         if (!Bukkit.getPluginManager().isPluginEnabled("LibsDisguises")) {
@@ -565,8 +591,9 @@ public class UltraCosmetics extends JavaPlugin {
             log("");
         }
 
-        petRenameMoney = SettingsManager.getConfig().getBoolean("Pets-Rename.Requires-Money.Enabled");
-        if ((ammoEnabled
+        //KookyKraftMC Start
+        petRenameMoney = true;
+        /*if ((ammoEnabled
                 || (SettingsManager.getConfig().getBoolean("Pets-Rename.Enabled"))
                 && SettingsManager.getConfig().getBoolean("Pets-Rename.Requires-Money.Enabled"))) {
             if (!Bukkit.getPluginManager().isPluginEnabled("Vault")) {
@@ -595,7 +622,12 @@ public class UltraCosmetics extends JavaPlugin {
             startMySQL();
             log("Connected to MySQL database.");
             log("");
-        }
+        }*/
+        Core.vaultLoaded = true;
+        Core.placeHolderColor = placeHolderColor;
+        Core.commandManager = commandManager;
+        //KookyKraftMC End
+
         initPlayers();
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new FallDamageManager(), 0, 1);
@@ -625,18 +657,21 @@ public class UltraCosmetics extends JavaPlugin {
             morphMenuListener = new MorphManager();
             registerListener(morphMenuListener);
         }
-        try {
+        //KookyKraftMC Start
+
+        /*try {
             config.save(file);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         log("Listeners registered.");
         log("");
         log("");
         log("UltraCosmetics finished loading and is now enabled!");
         log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
 
-        GeneralUtil.printPermissions();
+        //GeneralUtil.printPermissions();
+        //KookyKraftMC End
     }
 
     /**
@@ -665,8 +700,9 @@ public class UltraCosmetics extends JavaPlugin {
     /**
      * Starts MySQL loop.
      */
+    //KookyKraftMC Start
     private void startMySQL() {
-        if (!fileStorage) {
+        /*if (!fileStorage) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
                 @Override
                 public void run() {
@@ -724,8 +760,9 @@ public class UltraCosmetics extends JavaPlugin {
                     }
                 }
             }, 0, 24000);
-        }
+        }*/
     }
+    //KookyKraftMC End
 
     /**
      * Setup default Cosmetics config.
@@ -785,11 +822,13 @@ public class UltraCosmetics extends JavaPlugin {
             config.addDefault("Suits." + suit.getConfigName() + ".Show-Description", true, "if true, the description of this suit will be showed.");
             config.addDefault("Suits." + suit.getConfigName() + ".Can-Be-Found-In-Treasure-Chests", true, "if true, it'll be possible to find", "it in treasure chests");
         }
-        try {
+        //KookyKraftMC Start
+        /*try {
             config.save(file);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        //KookyKraftMC End
         for (GadgetType gadgetType : GadgetType.values())
             if (gadgetType.isEnabled())
                 GadgetType.gadgetTypes.add(gadgetType);
@@ -817,7 +856,9 @@ public class UltraCosmetics extends JavaPlugin {
     /**
      * Check Treasure Chests requirements.
      */
+    //KookyKraftMC Start
     private void checkTreasureChests() {
+        /*
         moneyTreasureLoot = SettingsManager.getConfig().getBoolean("TreasureChests.Loots.Money.Enabled");
         if (SettingsManager.getConfig().getBoolean("TreasureChests.Enabled")) {
             treasureChests = true;
@@ -835,14 +876,18 @@ public class UltraCosmetics extends JavaPlugin {
                 moneyTreasureLoot = false;
             }
         }
+        */
     }
+    //KookyKraftMC End
 
     /**
      * Setups Vault.
      *
      * @return {@code true} if it could be set up, otherwise {@code false}.
      */
+    //KookyKraftMC Start
     private boolean setupEconomy() {
+        /*
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null)
             economy = economyProvider.getProvider();
@@ -850,7 +895,10 @@ public class UltraCosmetics extends JavaPlugin {
         vaultLoaded = economy != null;
 
         return (economy != null);
+        */
+        return true;
     }
+    //KookyKraftMC End
 
     /**
      * Called when plugin disables.
@@ -873,7 +921,9 @@ public class UltraCosmetics extends JavaPlugin {
     /**
      * Checks for new update.
      */
+    //KookyKraftMC Start
     private void checkForUpdate() {
+        /*
         String currentVersion = UltraCosmetics.getPlugin().getDescription().getVersion()
                 .replace("Beta ", "")
                 .replace("Pre-", "")
@@ -888,7 +938,9 @@ public class UltraCosmetics extends JavaPlugin {
                 outdated = false;
         } else
             outdated = false;
+            */
     }
+    //KookyKraftMC End
 
     public static void openMainMenuFromOther(Player whoClicked) {
         if (customCommandBackArrow)
